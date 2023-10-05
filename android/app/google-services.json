@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "499647585512",
+    "project_id": "kaam-dhundo",
+    "storage_bucket": "kaam-dhundo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499647585512:android:6c6ad04d9136f8146cbd5d",
+        "android_client_info": {
+          "package_name": "com.example.kaam_dhundo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCinTA0HOO2B4mIm-S0WRzPsMYg1wId2Qc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
