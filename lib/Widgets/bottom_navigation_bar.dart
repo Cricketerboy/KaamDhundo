@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kaam_dhundo/Jobs/jobScreen.dart';
 import 'package:kaam_dhundo/Jobs/upload_job.dart';
@@ -98,8 +99,15 @@ class BottomNavigationBarForApp extends StatelessWidget {
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (_) => UploadJobNow()));
           } else if (index == 3) {
+            final FirebaseAuth _auth = FirebaseAuth.instance;
+            final User? user = _auth.currentUser;
+            final String uid = user!.uid;
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => ProfileScreen()));
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ProfileScreen(
+                          userID: uid,
+                        )));
           } else if (index == 4) {
             _logout(context);
           }

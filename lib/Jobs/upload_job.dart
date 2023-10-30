@@ -123,23 +123,26 @@ class _UploadJobNowState extends State<UploadJobNow> {
                     });
                     Navigator.pop(context);
                   },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_right_alt_outlined,
-                        color: Colors.grey,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          Persistent.jobCategoryList[index],
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.arrow_right_alt_outlined,
+                          color: Colors.grey,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            Persistent.jobCategoryList[index],
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -246,6 +249,26 @@ class _UploadJobNowState extends State<UploadJobNow> {
     } else {
       print('Its not valid');
     }
+  }
+
+  void getMyData() async {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    setState(() {
+      name = userDoc.get('name');
+      userImage = userDoc.get('userImage');
+      location = userDoc.get('location');
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMyData();
   }
 
   @override

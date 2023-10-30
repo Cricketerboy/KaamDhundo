@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kaam_dhundo/Widgets/all_companies_widget.dart';
-import 'package:kaam_dhundo/Widgets/bottom_navigation_bar.dart';
+import 'package:kaam_dhundo/Jobs/jobScreen.dart';
+import 'package:kaam_dhundo/Widgets/job_widget.dart';
 
-class AllWorkersScreen extends StatefulWidget {
-  const AllWorkersScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<AllWorkersScreen> createState() => _AllWorkersScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _AllWorkersScreenState extends State<AllWorkersScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchQueryController = TextEditingController();
   String searchQuery = 'Search query';
 
@@ -19,7 +19,7 @@ class _AllWorkersScreenState extends State<AllWorkersScreen> {
       controller: _searchQueryController,
       autocorrect: true,
       decoration: InputDecoration(
-        hintText: 'Search for companies...',
+        hintText: 'Search for jobs...',
         border: InputBorder.none,
         hintStyle: TextStyle(color: Colors.white),
       ),
@@ -65,7 +65,6 @@ class _AllWorkersScreenState extends State<AllWorkersScreen> {
         ),
       ),
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBarForApp(indexNumber: 1),
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           flexibleSpace: Container(
@@ -81,47 +80,54 @@ class _AllWorkersScreenState extends State<AllWorkersScreen> {
               ),
             ),
           ),
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => JobScreen()));
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
           title: _buildSearchField(),
           actions: _buildActions(),
         ),
-        body: StreamBuilder<QuerySnapshot>(
+        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
-              .collection('users')
-              .where('name', isGreaterThanOrEqualTo: searchQuery)
+              .collection('jobs')
+              .where('jobTitle', isGreaterThanOrEqualTo: searchQuery)
+              .where('recruitement', isEqualTo: true)
               .snapshots(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return Center(child: CircularProgressIndicator());
             } else if (snapshot.connectionState == ConnectionState.active) {
-              if (snapshot.data!.docs.isNotEmpty) {
+              if (snapshot.data?.docs.isNotEmpty == true) {
                 return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
+                  itemCount: snapshot.data?.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return AllWorkersWidget(
-                      userID: snapshot.data!.docs[index]['id'],
-                      userName: snapshot.data!.docs[index]['name'],
-                      userEmail: snapshot.data!.docs[index]['email'],
-                      phoneNumber: snapshot.data!.docs[index]['phoneNumber'],
-                      userImageUrl: snapshot.data!.docs[index]['userImage'],
+                    return JobWidget(
+                      jobTitle: snapshot.data?.docs[index]['jobTitle'],
+                      jobDescription: snapshot.data?.docs[index]
+                          ['jobDescription'],
+                      jobId: snapshot.data?.docs[index]['jobId'],
+                      uploadedBy: snapshot.data?.docs[index]['uploadedBy'],
+                      userImage: snapshot.data?.docs[index]['userImage'],
+                      name: snapshot.data?.docs[index]['name'],
+                      recruitment: snapshot.data?.docs[index]['recruitement'],
+                      email: snapshot.data?.docs[index]['email'],
+                      location: snapshot.data?.docs[index]['location'],
                     );
                   },
                 );
               } else {
                 return Center(
-                  child: Text('There is no user'),
+                  child: Text('There is no jobs'),
                 );
               }
             }
             return Center(
               child: Text(
                 'Something went wrong',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30.0),
               ),
             );
           },
